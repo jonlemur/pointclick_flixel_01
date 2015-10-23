@@ -3,24 +3,25 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
 import flixel.tile.FlxTilemap;
-import openfl.Assets;
-import flixel.FlxObject;
-import flixel.util.FlxPoint;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxPath;
-import flixel.group.FlxGroup;
-
+import flixel.util.FlxPoint;
+import openfl.Assets;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import flixel.util.FlxColor;
 
 class PlayState extends FlxState
 {
 	
 	var mapBG:FlxSprite;
+	var ping:FlxSprite;
 	private var _mWalls:FlxTilemap;
 	
-	private var _player:PathOBJ;
+	var _bag:Bag;
+	
+	private var _player:FlxSprite;
 	private var _playerIMG:Player;
 	
 	var goal:FlxPoint;
@@ -41,12 +42,16 @@ class PlayState extends FlxState
 		mapBG.loadGraphic("assets/images/map01.png");
 		add(mapBG);
 		
+		ping = new FlxSprite();
+		ping.loadGraphic("assets/images/ping.png", false, 64, 64);
+		
 		_mWalls = new FlxTilemap();
 		_mWalls.loadMap(Assets.getText("assets/data/Maps/tiled01.txt"), "assets/images/tile2.png", 16, 16, 0, 1);
 		add(_mWalls);
 	
 		
-		_player = new PathOBJ(180, 300);
+		_player = new FlxSprite(180, 300);
+		_player.loadGraphic("assets/images/tile2.png", false, 16, 16);
 		add(_player);
 		
 		_playerIMG = new Player(180, 300);
@@ -57,6 +62,9 @@ class PlayState extends FlxState
 		path = new FlxPath();
 		goal = new FlxPoint(0,0);
 		start = new FlxPoint(_player.x, _player.y);
+		
+		_bag = new Bag();
+		add(_bag);
 		
 	}
 	
@@ -77,22 +85,25 @@ class PlayState extends FlxState
 		
 		if (FlxG.mouse.justPressed)
 		{
+			
 			goal.set(FlxG.mouse.x, FlxG.mouse.y);
 			start.set(_player.x, _player.y);
 			
-			if (goal.x < start.x)
-			{
-				_playerIMG.facingRight = false;
-				trace("left");
-			}
-			else
-			{
-				_playerIMG.facingRight = true;
-				trace("right");
-			}
+			ping.x = goal.x - ping.width/2;
+			ping.y = goal.y - ping.height/2;
+			ping.scale.x = 0;
+			ping.scale.y = 0;
+			ping.alpha = 1;
+			add(ping);
+			FlxTween.tween(ping.scale, { x:0.7, y:0.7 }, 0.5, { type:FlxTween.ONESHOT, ease:FlxEase.quadInOut, complete: removePing});
+			FlxTween.color(ping, 0.9, FlxColor.WHITE, FlxColor.WHITE, 1, 0, { type:FlxTween.ONESHOT, ease:FlxEase.quadInOut } );
 			
-			trace(_player.height);
-			trace(goal);
+			if (goal.x < start.x)
+			{_playerIMG.facingRight = false;}
+			else
+			{_playerIMG.facingRight = true;}
+			
+
 			 moveToGoal();
 		}
 		
@@ -123,6 +134,10 @@ class PlayState extends FlxState
 		
 	}
 	
+	private function removePing(tween:FlxTween):Void
+	{
+    remove(ping);
+	}
 	
 	
 }
