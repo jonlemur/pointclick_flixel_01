@@ -35,6 +35,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 		
+		FlxG.mouse.load("assets/images/cursor.png");
+		
 		mapBG = new FlxSprite();
 		mapBG.loadGraphic("assets/images/map01.png");
 		add(mapBG);
