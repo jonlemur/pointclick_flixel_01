@@ -20,7 +20,8 @@ class PlayState extends FlxState
 	var mapBG:FlxSprite;
 	private var _mWalls:FlxTilemap;
 	
-	private var _player:Player;
+	private var _player:PathOBJ;
+	private var _playerIMG:Player;
 	
 	var goal:FlxPoint;
 	var start:FlxPoint;
@@ -39,12 +40,16 @@ class PlayState extends FlxState
 		add(mapBG);
 		
 		_mWalls = new FlxTilemap();
-		_mWalls.loadMap(Assets.getText("assets/data/Maps/tiled01.txt"), "assets/images/tile.png", 16, 16, 0, 1);
+		_mWalls.loadMap(Assets.getText("assets/data/Maps/tiled01.txt"), "assets/images/tile2.png", 16, 16, 0, 1);
 		add(_mWalls);
 	
 		
-		_player = new Player(180, 300);
+		_player = new PathOBJ(180, 300);
 		add(_player);
+		
+		_playerIMG = new Player(180, 300);
+		_playerIMG.scale.set(0.7, 0.7);
+		add(_playerIMG);
 		
 		
 		path = new FlxPath();
@@ -65,16 +70,36 @@ class PlayState extends FlxState
 		super.update();
 		
 		//FlxG.collide(_player, _mWalls);
+		_playerIMG.x = _player.x-_playerIMG.width/2;
+		_playerIMG.y = _player.y-_playerIMG.height*0.7;
 		
 		if (FlxG.mouse.justPressed)
 		{
 			goal.set(FlxG.mouse.x, FlxG.mouse.y);
 			start.set(_player.x, _player.y);
 			
+			if (goal.x < start.x)
+			{
+				_playerIMG.facingRight = false;
+				trace("left");
+			}
+			else
+			{
+				_playerIMG.facingRight = true;
+				trace("right");
+			}
+			
 			trace(_player.height);
 			trace(goal);
 			 moveToGoal();
 		}
+		
+		if (path.finished)
+		{
+			_playerIMG.walking = false;
+			_playerIMG.setanim();
+		}
+
 	}	
 
 	private function moveToGoal():Void
@@ -88,9 +113,12 @@ class PlayState extends FlxState
 		if (pathPoints != null) 
 		{
 			path.start(_player, pathPoints);
-
-		}
 			
+			_playerIMG.walking = true;
+			_playerIMG.setanim();
+		}
+		
+		
 	}
 	
 	
