@@ -16,9 +16,9 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="C:\Users\jonpi_000\lime\flixel\3,3,11" />
-    <class path="C:\Users\jonpi_000\lime\openfl\3,3,9" />
-    <class path="C:\Users\jonpi_000\lime\lime\2,6,9" />
+    <class path="C:\Users\jonpi_000\neko\flixel\3,3,11" />
+    <class path="C:\Users\jonpi_000\neko\openfl\3,3,9" />
+    <class path="C:\Users\jonpi_000\neko\lime\2,6,9" />
     <class path="source" />
     <class path="export\windows\neko\haxe" />
   </classpaths>
