@@ -2,6 +2,8 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxExtendedSprite;
+import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import flixel.tweens.FlxTween;
@@ -37,6 +39,7 @@ class PlayState extends FlxState
 	var inventoryToggle:Bool = false;
 	var inventoryItems:Array<String>;
 	var inventorySprites:Array<FlxSprite>;
+	var itemOrigin:FlxPoint = new FlxPoint(null,null);
 
 	
 	override public function create():Void
@@ -44,6 +47,8 @@ class PlayState extends FlxState
 		super.create();
 		
 		FlxG.mouse.load("assets/images/cursor.png");
+		
+		FlxG.plugins.add(new FlxMouseControl());
 		
 		mapBG = new FlxSprite();
 		mapBG.loadGraphic("assets/images/map01.png");
@@ -235,25 +240,37 @@ class PlayState extends FlxState
 		function placeItems(tween:FlxTween):Void
 		{
 			
-			var placeX = _bag.x;
-			var itemframe = 0;
+			var placeX = _bag.x-260;
+			var itemframe = -1;
 			
 			for (i in inventoryItems)
 			{	
-				placeX -= 64;
-				itemframe++;
-				var i = new FlxSprite(placeX, _bag.y - 2);
+				placeX += 65;
+				itemframe+=1;
+				var i = new FlxExtendedSprite(placeX, _bag.y - 2);
 				i.loadGraphic("assets/images/items01.png", false, 64, 64);
 				i.animation.frameIndex = itemframe;
 				i.scale.set(0, 0);
+				i.draggable = true;
+				i.enableMouseDrag();
 				inventorySprites.push(i);
 				add(i);
 				FlxTween.tween(i.scale, { x:1, y:1 }, 0.1);
-				
+				MouseEventManager.add(i, pickItem, dropItem);
 			}
+		}   
+		
+		function pickItem(sprite:FlxSprite):Void
+		{
+		itemOrigin.set(sprite.x, sprite.y);
+		}
+		
+		function dropItem (sprite:FlxSprite):Void
+		{
+		sprite.setPosition(itemOrigin.x, itemOrigin.y);
 		
 		}
 		
-	
+			
 	
 }
